@@ -5,3 +5,6 @@ sqlalchemy # SQL toolkit and Object-Relational Mapping (ORM) system for Python
 psycopg2-binary # PostgreSQL adapter for Python
 
 python-dotenv # Read environment variables from .env file
+
+alembic # Database migration tool for SQLAlchemy
+asyncpg # PostgreSQL database adapter for Python

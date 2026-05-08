@@ -1,7 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import Session
+from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
 from app.schemas.note import NoteCreate, NoteResponse
@@ -17,7 +17,7 @@ service = NoteSevice()
 
 @router.post(
     "",
-    response_mode=NoteResponse
+    response_model=NoteResponse  # Specify the response model for the created note
 )
 async def create_note(
     note_data: NoteCreate,
@@ -28,7 +28,7 @@ async def create_note(
 
 @router.get(
     "",
-    response_model=[NoteResponse]
+    response_model=List[NoteResponse]
 )
 async def get_notes(
     db: Session = Depends(get_db)
