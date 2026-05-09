@@ -32,9 +32,10 @@ async def create_note(
 
 @router.get(
     "",
-    response_model=List[NoteResponse]
+    response_model=List[NoteResponse],
+    dependencies=[Depends(get_current_user)]
 )
 async def get_notes(
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     return await service.get_notes(db)
