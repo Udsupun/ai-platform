@@ -8,3 +8,8 @@ python-dotenv # Read environment variables from .env file
 
 alembic # Database migration tool for SQLAlchemy
 asyncpg # PostgreSQL database adapter for Python
+
+python-jose[cryptography] # JWT library for authentication
+passlib[bcrypt] # Password hashing library
+bcrypt==4.0.1
+python-multipart # File upload library

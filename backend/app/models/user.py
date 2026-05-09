@@ -8,5 +8,6 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
     name = Column(String, nullable=False)
-    notes = relationship("Note", back_populates="owner")
+    notes = relationship("Note", back_populates="user")
