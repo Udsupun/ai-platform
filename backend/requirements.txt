@@ -13,3 +13,8 @@ python-jose[cryptography] # JWT library for authentication
 passlib[bcrypt] # Password hashing library
 bcrypt==4.0.1
 python-multipart # File upload library
+
+qdrant-client # Qdrant client for Python
+
+sentence-transformers # Sentence Transformers for embedding
+torch # PyTorch for deep learning

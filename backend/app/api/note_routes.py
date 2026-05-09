@@ -39,3 +39,19 @@ async def get_notes(
     db: AsyncSession = Depends(get_db),
 ):
     return await service.get_notes(db)
+
+@router.get(
+    "/search",
+    dependencies=[Depends(get_current_user)]
+)
+async def search_notes(
+    query: str
+):
+    results = service.vector_service.search_notes(query)
+    return [
+        {
+            "score": result.score,
+            "content": result.payload
+        }
+        for result in results.points
+    ]

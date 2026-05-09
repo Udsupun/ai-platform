@@ -9,6 +9,8 @@ from app.db.database import Base, engine
 from app.models.note import Note
 from app.models.user import User
 
+from app.services.vectory_service import VectorService
+
 # Create the database tables
 @asynccontextmanager
 async def lifespan(app:FastAPI):
@@ -16,6 +18,11 @@ async def lifespan(app:FastAPI):
         await conn.run_sync(
             Base.metadata.create_all
         )
+    yield
+
+    vector_service = VectorService()
+    vector_service.create_collection()
+
     yield
 
 # Create the FastAPI app
