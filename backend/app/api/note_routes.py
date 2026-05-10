@@ -5,17 +5,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.dependencies import get_db
 from app.schemas.note import NoteCreate, NoteResponse
-from app.services.note_service import NoteSevice
+from app.services.note_service import NoteService
 
 from app.core.security import get_current_user
 from app.models.user import User
+
+from app.dependencies.services import get_note_service
 
 router = APIRouter(
     prefix="/notes",
     tags=["Notes"]
 )
-
-service = NoteSevice()
 
 
 @router.post(
@@ -25,7 +25,8 @@ service = NoteSevice()
 async def create_note(
     note_data: NoteCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    service: NoteService = Depends(get_note_service)
 ):
 
     return await service.create_note(db, note_data, current_user.id)
@@ -37,21 +38,21 @@ async def create_note(
 )
 async def get_notes(
     db: AsyncSession = Depends(get_db),
+    service: NoteService = Depends(get_note_service)
 ):
     return await service.get_notes(db)
 
-@router.get(
-    "/search",
-    dependencies=[Depends(get_current_user)]
-)
+@router.get("/search")
 async def search_notes(
-    query: str
+    query: str,
+    current_user: User = Depends(get_current_user),
+    service: NoteService = Depends(get_note_service)
 ):
-    results = service.vector_service.search_notes(query)
+    results = service.vector_service.search_notes(query, current_user.id)
     return [
         {
             "score": result.score,
-            "content": result.payload
+            "content": result.content
         }
-        for result in results.points
+        for result in results
     ]

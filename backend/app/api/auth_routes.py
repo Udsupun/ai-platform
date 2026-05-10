@@ -9,12 +9,12 @@ from app.schemas.auth import (
     TokenResponse
 )
 
-from app.services.auth_service import AuthServcie
+from app.services.auth_service import AuthService
 
 from app.core.security import get_current_user
 from app.models.user import User
 
-service = AuthServcie()
+from app.dependencies.services import get_auth_service
 
 router = APIRouter(
     prefix="/auth",
@@ -27,7 +27,8 @@ router = APIRouter(
 )
 async def register (
     data: RegisterRequest,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    service: AuthService = Depends(get_auth_service)
 ):
     token = await service.register(db, data)
     return {
@@ -41,7 +42,8 @@ async def register (
 )
 async def login (
     data: LoginRequest,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    service: AuthService = Depends(get_auth_service)
 ):
     token = await service.login(db, data)
 

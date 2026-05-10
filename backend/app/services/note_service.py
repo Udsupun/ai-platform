@@ -5,14 +5,18 @@ from app.schemas.note import NoteCreate
 
 from app.services.vector_service import VectorService
 
-class NoteSevice:
-    def __init__(self):
-        self.repository = NoteRepository()
-        self.vector_service = VectorService()
+class NoteService:
+    def __init__(
+            self,
+            note_repository: NoteRepository,
+            vector_service: VectorService
+    ):
+        self.repository = note_repository
+        self.vector_service = vector_service
 
     async def create_note(self, db: AsyncSession, note_data: NoteCreate, user_id: int):
         note = await self.repository.create_note(db, note_data, user_id)
-        self.vector_service.store_note_embeddings(note.id, note.content)
+        self.vector_service.store_note_embeddings(note.id, note.content, user_id)
         return note
 
     async def get_notes(self, db: AsyncSession):

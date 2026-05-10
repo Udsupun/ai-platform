@@ -1,9 +1,11 @@
 from qdrant_client import QdrantClient
-from qdrant_client.models import (Distance, VectorParams, PointStruct)
+from qdrant_client.models import (Distance, VectorParams, PointStruct, Filter, FieldCondition, MatchValue)
 
 from sentence_transformers import (SentenceTransformer)
 
-import random
+from app.utils.text_chunker import chunk_text
+
+from uuid import uuid4
 
 class VectorService:
     def __init__(self):
@@ -37,28 +39,36 @@ class VectorService:
     def store_note_embeddings(
         self,
         note_id: int,
-        content: str
+        content: str,
+        user_id: int
     ):
-        embedding = (
-            self.generate_embedding(content)
-        )
+        chunks = chunk_text(content)
+        points = []
+        for chunk in chunks:
+            embedding = (
+                self.generate_embedding(chunk)
+            )
+            points.append(
+                PointStruct(
+                    id=str(uuid4()),
+                    vector=embedding,
+                    payload={
+                        "user_id": user_id,
+                        "note_id": note_id,
+                        "content": chunk
+                    }
+                )
+            )
 
         self.client.upsert(
             collection_name="notes",
-            points=[
-                PointStruct(
-                    id=note_id,
-                    vector=embedding,
-                    payload={
-                        "content": content
-                    }
-                )
-            ]
+            points=points
         )
 
     def search_notes(
         self,
-        query: str
+        query: str,
+        user_id: int
     ):
         query_embedding = (
             self.generate_embedding(query)
@@ -67,10 +77,25 @@ class VectorService:
         results = self.client.query_points(
             collection_name="notes",
             query=query_embedding,
+            query_filter=Filter(
+                must=[
+                    FieldCondition(
+                        key="user_id",
+                        match=MatchValue(value=user_id)
+                    )
+                ]
+            ),
             limit=5
         )
 
-        return results
+        return [
+            {
+                "score": result.score,
+                "note_id": result.payload["note_id"],
+                "content": result.payload["content"]
+            }
+            for result in results.points
+        ]
 
     def generate_embedding(
             self,

@@ -4,26 +4,26 @@ from app.services.rag_service import (
 from app.schemas.chat import ChatRequest
 from fastapi import APIRouter, Depends
 from app.core.security import get_current_user
+from app.models.user import User
+
+from app.dependencies.services import get_rag_service
 
 router = APIRouter(
     prefix="/chat",
     tags=["Chat"]
 )
 
-rag_service = RAGService()
-
-
-@router.post(
-    "/",
-    dependencies=[Depends(get_current_user)]
-)
+@router.post("/")
 async def chat(
-    data: ChatRequest
+    data: ChatRequest,
+    current_user: User = Depends(get_current_user),
+    rag_service: RAGService = Depends(get_rag_service)
 ):
 
     response = (
         rag_service.ask_question(
-            data.question
+            data.question,
+            current_user.id
         )
     )
 

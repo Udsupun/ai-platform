@@ -15,10 +15,10 @@ from app.schemas.auth import (
     RegisterRequest
 )
 
-class AuthServcie:
+class AuthService:
 
-    def __init__(self):
-        self.repository = AuthRepository()
+    def __init__(self, auth_repository: AuthRepository):
+        self.repository = auth_repository
 
     async def register(
         self,
