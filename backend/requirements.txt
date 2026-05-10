@@ -20,3 +20,9 @@ sentence-transformers # Sentence Transformers for embedding
 torch # PyTorch for deep learning
 
 ollama # Ollama for LLMs
+
+pytest # Testing framework
+pytest-asyncio # Async support for pytest
+ruff # Fast Python linter
+black # Opinionated code formatter
+mypy # Optional static type checker

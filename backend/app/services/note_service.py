@@ -2,15 +2,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories.note_repository import NoteRepository
 from app.schemas.note import NoteCreate
-
 from app.services.vector_service import VectorService
 
+
 class NoteService:
-    def __init__(
-            self,
-            note_repository: NoteRepository,
-            vector_service: VectorService
-    ):
+    def __init__(self, note_repository: NoteRepository, vector_service: VectorService):
         self.repository = note_repository
         self.vector_service = vector_service
 
