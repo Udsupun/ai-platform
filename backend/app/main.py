@@ -4,12 +4,13 @@ from fastapi import FastAPI
 
 from app.api.note_routes import router as note_router
 from app.api.auth_routes import router as auth_router
+from app.api.chat_routes import router as chat_router
 from app.db.database import Base, engine
 
 from app.models.note import Note
 from app.models.user import User
 
-from app.services.vectory_service import VectorService
+from app.services.vector_service import VectorService
 
 # Create the database tables
 @asynccontextmanager
@@ -33,6 +34,7 @@ app = FastAPI(
 # Include the routers
 app.include_router(note_router)
 app.include_router(auth_router)
+app.include_router(chat_router)
 
 # Define the root endpoint
 @app.get("/")

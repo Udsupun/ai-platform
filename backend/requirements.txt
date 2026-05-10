@@ -18,3 +18,5 @@ qdrant-client # Qdrant client for Python
 
 sentence-transformers # Sentence Transformers for embedding
 torch # PyTorch for deep learning
+
+ollama # Ollama for LLMs
