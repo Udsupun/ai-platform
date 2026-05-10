@@ -16,8 +16,6 @@ from app.services.vector_service import VectorService
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    yield
-
     vector_service = VectorService()
     vector_service.create_collection()
 
@@ -27,10 +25,15 @@ async def lifespan(app: FastAPI):
 # Create the FastAPI app
 app = FastAPI(lifespan=lifespan)
 
+allowed_origins = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173",
+).split(",")
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("ALLOWED_ORIGINS")],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
