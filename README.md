@@ -137,6 +137,14 @@ docker compose exec ollama ollama pull phi3:mini
 
 ---
 
+## API Documentation
+
+```bash
+http://localhost:8000/docs
+```
+
+---
+
 # Frontend Setup
 
 ## 1. Install Dependencies
