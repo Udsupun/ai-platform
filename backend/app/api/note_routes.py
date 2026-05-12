@@ -7,6 +7,7 @@ from app.core.security import get_current_user
 from app.db.dependencies import get_db
 from app.dependencies.services import get_note_service
 from app.models.user import User
+from app.schemas.common import ApiResponse
 from app.schemas.note import NoteCreate, NoteResponse
 from app.services.note_service import NoteService
 
@@ -14,7 +15,10 @@ router = APIRouter(prefix="/notes", tags=["Notes"])
 
 
 @router.post(
-    "", response_model=NoteResponse  # Specify the response model for the created note
+    "",
+    response_model=ApiResponse[
+        NoteResponse
+    ],  # Specify the response model for the created note
 )
 async def create_note(
     note_data: NoteCreate,
@@ -23,16 +27,22 @@ async def create_note(
     service: NoteService = Depends(get_note_service),
 ):
 
-    return await service.create_note(db, note_data, int(current_user.id))
+    note = await service.create_note(db, note_data, int(current_user.id))
+    return ApiResponse(success=True, message="Note created successfully", data=note)
 
 
 @router.get(
-    "", response_model=List[NoteResponse], dependencies=[Depends(get_current_user)]
+    "",
+    response_model=ApiResponse[List[NoteResponse]],
+    dependencies=[Depends(get_current_user)],
 )
 async def get_notes(
-    db: AsyncSession = Depends(get_db), service: NoteService = Depends(get_note_service)
+    db: AsyncSession = Depends(get_db),
+    service: NoteService = Depends(get_note_service),
+    current_user: User = Depends(get_current_user),
 ):
-    return await service.get_notes(db)
+    notes = await service.get_notes(db, int(current_user.id))
+    return ApiResponse(success=True, message="Notes retrieved successfully", data=notes)
 
 
 @router.get("/search")
